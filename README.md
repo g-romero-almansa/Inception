@@ -120,3 +120,11 @@ Vamos a añadir con este comando el certificado y la clave privada para hacer la
  	listen		443 ssl; añadimos ademas del puerto 443 ssl para que utilize estos puertos
   	ssl_protocols	TLSv1.2 TLSv1.3; añadimos la directiva para que permita tanto v1.2 como v1.3
 }
+
+Dockerfie para Mariadb
+{
+Creamos el dockerfile con lo mismo que nginx lo unico que cambiando comandos y script para instalar mariadb
+
+
+
+}
