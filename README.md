@@ -125,6 +125,6 @@ Dockerfie para Mariadb
 {
 Creamos el dockerfile con lo mismo que nginx lo unico que cambiando comandos y script para instalar mariadb
 
-
+Corremos el script que contiene comandos simples para crear la base de datos y los usuarios
 
 }
