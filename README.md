@@ -6,6 +6,10 @@ Conectarse con ssh
 
 	ssh gromero-@localhost -p 4343
 
+Archivo .env
+{
+Creamos las variables globlales que necesitaremos luego para no dejar contraseñas ni nada sensible en los dockerfile etc...
+}
 Instalar Docker Compose
 {
 Primero necesito instalar curl que sirve para para poder descargar cosas, en este caso un repo de gituhub.
@@ -56,6 +60,7 @@ Creamos el container de nginx:
 	-container_name: nombre del container que en este caso es nginx
 	-restart (MIRAR PARA QUE SIRVE REALMENTE)
 	-port: Primero va el puerto del host y luego el del container
+ 	-env_file : importa el archivo .env para usar las variables globales
 
 }
 
