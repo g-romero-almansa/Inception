@@ -133,3 +133,8 @@ Creamos el dockerfile con lo mismo que nginx lo unico que cambiando comandos y s
 Corremos el script que contiene comandos simples para crear la base de datos y los usuarios
 
 }
+
+Dockerfile para wordpress
+{
+Tenemos que instalar tanto wordpress com php y para wordpress se necista instalar wget y tar.
+}
