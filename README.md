@@ -61,7 +61,14 @@ Creamos el container de nginx:
 	-restart (MIRAR PARA QUE SIRVE REALMENTE)
 	-port: Primero va el puerto del host y luego el del container
  	-env_file : importa el archivo .env para usar las variables globales
+	-networks : ponemos eo nombre de la network que hemos creado.
 
+Apartado de networks aparte de services.
+
+	networks:
+  		inception:
+    			driver: bridge
+       (Primero el apartado de networks para declarar que vamos a crear una, lo siguiente es el nombre, en el ultimo apartado vienen las normas que vamos a poner que en este caso es drivers:bridge lo cual es el standar aunque lo ponemos por si acaso, bridge conecta todos los containers entre si, en el mismo host)
 }
 
 Makefile
