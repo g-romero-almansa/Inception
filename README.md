@@ -143,7 +143,7 @@ Corremos el script que contiene comandos simples para crear la base de datos y l
 	chown -R mysql:root /var/run/mysqld (Cambiamos los permisos del directorio de la base de datos a la ruta bajo el root de mysql)
  	mariadbd --init-file /run/mysqld/init.sql (Iniciamos el servicio con mariadbd para que el daemon este off y no se cierre el container y con --init-file hacemos que de inicio lanze el script que hemos creado para crear todo)
 
-En el archivo de configuracion de mysql lo unico importante que cambiar es bind-address = 0,0,0,0 (INVESTIGAR EL PORQUE)
+En el archivo de configuracion de mysql lo unico importante que cambiar es bind-address = 0,0,0,0 (INVESTIGAR EL POR QUE)
 }
 
 Dockerfile para wordpress
