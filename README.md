@@ -129,9 +129,21 @@ Vamos a añadir con este comando el certificado y la clave privada para hacer la
 Dockerfie para Mariadb
 {
 Creamos el dockerfile con lo mismo que nginx lo unico que cambiando comandos y script para instalar mariadb
+Tenemos que crear el directoria de /run/mysqld que es donde tendremos que cambiar los permisos del root de mysql
 
 Corremos el script que contiene comandos simples para crear la base de datos y los usuarios
+	
+ 	echo "CREATE DATABASE ${DATABASE_NAME};" > init.sql
+	echo "CREATE USER '${MARIADB_USER}'@'%' IDENTIFIED BY '${MARIADB_PASS}';" >> init.sql
+	echo "CREATE USER '${MARIADB_GUEST}'@'%' IDENTIFIED BY '${MARIADB_GUEST_PASS}';" >> init.sql
+	echo "GRANT ALL PRIVILEGES ON *.* TO '${MARIADB_USER}'@'%';" >> init.sql
+ 	En esta parte estamos creando el archivo .sql con los comandos que lanzar cuando iniciemos mariadb(sirven para crear la base de datos y los usuarios con sus respectivos privilegios)
+  	chmod 777 init.sql (Damos permisos al archivo .sql)
+	mv init.sql /run/mysqld/init.sql (Lo movemos a la ruta donde estara el root de la base de datos)
+	chown -R mysql:root /var/run/mysqld (Cambiamos los permisos del directorio de la base de datos a la ruta bajo el root de mysql)
+ 	mariadbd --init-file /run/mysqld/init.sql (Iniciamos el servicio con mariadbd para que el daemon este off y no se cierre el container y con --init-file hacemos que de inicio lanze el script que hemos creado para crear todo)
 
+En el archivo de configuracion de mysql lo unico importante que cambiar es bind-address = 0,0,0,0 (INVESTIGAR EL PORQUE)
 }
 
 Dockerfile para wordpress
