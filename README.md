@@ -61,6 +61,7 @@ Creamos el container de nginx:
 	-restart (MIRAR PARA QUE SIRVE REALMENTE)
 	-port: Primero va el puerto del host y luego el del container
  	-env_file : importa el archivo .env para usar las variables globales
+  	-depends_on : con esto indicamos que un container depende del otro por lo tanto wordpress depende de mariadb y nginx depende de wordpross y con esto estamos diciendo el orden en el que se van a iniciar los containers, primero mariadb luego wordpress y por ultimo nginx.
 	-networks : ponemos eo nombre de la network que hemos creado.
 
 Apartado de networks aparte de services.
