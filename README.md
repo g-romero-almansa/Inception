@@ -63,6 +63,7 @@ Creamos el container de nginx:
  	-env_file : importa el archivo .env para usar las variables globales
   	-depends_on : con esto indicamos que un container depende del otro por lo tanto wordpress depende de mariadb y nginx depende de wordpross y con esto estamos diciendo el orden en el que se van a iniciar los containers, primero mariadb luego wordpress y por ultimo nginx.
 	-networks : ponemos eo nombre de la network que hemos creado.
+	-expose : para exponer el puerto de los contenedor y no usar port para que no se pueda acceder desde el exterior
 
 Apartado de networks aparte de services.
 
@@ -158,4 +159,16 @@ Dockerfile para wordpress
 {
 https://wiki.crowncloud.net/?How_to_Install_WordPress_on_Debian_11
 Tenemos que instalar tanto wordpress com php y para wordpress se necista instalar wget y tar.
+
+Cambiamos el nombre del archivo a el que usa wordpress como default con este comando y tenemos que cambiar varias lineas dentro para cambiar los datos y no usar contraseñas dentro del archivo.
+
+	mv /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
+
+ Con el comando sed (sirve para cambiar texto dentro de un archivo, la primera s/ indica donde se empieza y en el primer caso del puerto se utiliza s# porque ya hay / dentro de lo que vamos a cambiar y la g del final es necesaria cuando cambiamos un /)
+
+	sed -i 's#listen = /run/php/php7.4-fpm.sock#listen = wordpress:9000#g' /etc/php/7.4/fpm/pool.d/www.conf (Cambiamos el puerto por el que escuchamos en wordpress a 9000)
+ 	sed -i "s/database_name_here/$DATABASE_NAME/" /var/www/html/wordpress/wp-config.php
+	sed -i "s/username_here/$MARIADB_USER/" /var/www/html/wordpress/wp-config.php
+	sed -i "s/password_here/$MARIADB_PASS/" /var/www/html/wordpress/wp-config.php
+	sed -i "s/localhost/mariadb:3306/" /var/www/html/wordpress/wp-config.php (Cambiamos el host a mariadb y le ponemos el puerto)
 }
