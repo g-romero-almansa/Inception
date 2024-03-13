@@ -160,6 +160,11 @@ Dockerfile para wordpress
 https://wiki.crowncloud.net/?How_to_Install_WordPress_on_Debian_11
 Tenemos que instalar tanto wordpress com php y para wordpress se necista instalar wget y tar.
 
+Cambiamos los permisos del directorio a /var/www/html/wordpress y luego le cambiamos los permisos del directorio.
+
+	chown -R www-data.www-data /var/www/html/wordpress
+	chmod -R 755 /var/www/html/wordpress
+
 Cambiamos el nombre del archivo a el que usa wordpress como default con este comando y tenemos que cambiar varias lineas dentro para cambiar los datos y no usar contraseñas dentro del archivo.
 
 	mv /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
