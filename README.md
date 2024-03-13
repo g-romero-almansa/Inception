@@ -157,9 +157,12 @@ En el archivo de configuracion de mysql lo unico importante que cambiar es bind-
 
 Dockerfile para wordpress
 {
-https://wiki.crowncloud.net/?How_to_Install_WordPress_on_Debian_11
 Tenemos que instalar tanto wordpress com php y para wordpress se necista instalar wget y tar.
 
+Creamos el directorio para guardar el socket y archivos necesarios.
+
+	mkdir -p /run/php
+ 
 Cambiamos los permisos del directorio a /var/www/html/wordpress y luego le cambiamos los permisos del directorio.
 
 	chown -R www-data.www-data /var/www/html/wordpress
