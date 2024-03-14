@@ -10,6 +10,13 @@ Archivo .env
 {
 Creamos las variables globlales que necesitaremos luego para no dejar contraseñas ni nada sensible en los dockerfile etc...
 }
+
+Cambiar el hostname de localhost para poder entrar con nuestro login.42.fr
+{
+En el archivo /etc/hosts añadimos la ip del localhost y luego la url que queremos
+
+	127.0.0.1	gromero-.42.fr
+}
 Instalar Docker Compose
 {
 Primero necesito instalar curl que sirve para para poder descargar cosas, en este caso un repo de gituhub.
@@ -157,9 +164,9 @@ En el archivo de configuracion de mysql lo unico importante que cambiar es bind-
 
 Dockerfile para wordpress
 {
-Tenemos que instalar tanto wordpress com php y para wordpress se necista instalar wget y tar.
+Tenemos que instalar tanto wordpress com php y para wordpress se necista instalar wget y tar(wget descarga de la pagina de wordpress y con tar descomprimimos el archivo).
 
-Creamos el directorio para guardar el socket y archivos necesarios.
+Creamos el directorio necesario para que se guarde el pid de php.
 
 	mkdir -p /run/php
  
