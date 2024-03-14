@@ -71,7 +71,8 @@ Creamos el container de nginx:
   	-depends_on : con esto indicamos que un container depende del otro por lo tanto wordpress depende de mariadb y nginx depende de wordpross y con esto estamos diciendo el orden en el que se van a iniciar los containers, primero mariadb luego wordpress y por ultimo nginx.
 	-networks : ponemos eo nombre de la network que hemos creado.
 	-expose : para exponer el puerto de los contenedor y no usar port para que no se pueda acceder desde el exterior
-
+	-volumes : con esto ponemos el volumen:/  ponemos el nombre del volumen y la ruta donde queremos montarlo
+ 
 Apartado de networks aparte de services.
 
 	networks:
@@ -79,6 +80,24 @@ Apartado de networks aparte de services.
     			driver: bridge
        (Primero el apartado de networks para declarar que vamos a crear una, lo siguiente es el nombre, en el ultimo apartado vienen las normas que vamos a poner que en este caso es drivers:bridge lo cual es el standar aunque lo ponemos por si acaso, bridge conecta todos los containers entre si, en el mismo host)
 }
+
+Apartado de volumenes.
+
+	volumes:
+ 		mariadb_data:
+   			driver: local
+    			driver_opts:
+      				type: none	
+       				device: /home/gromero-/data/mariadb
+      				o: bind
+   		wordpress_data:
+     			driver: local
+			driver_opts:
+      				type: none	
+       				device: /home/gromero-/data/mariadb
+      				o: bind
+	  
+	(Volumes para indicar que es el apartado de volumenes, declaramos los nombre de los volumenes que vamos a crear, driver es para indicar que los datos se guardan en local y no se van a exportar a la nube, con esto los volumenes se deberian de crear si no existen aunque de todas formas se van a crear de forma anterior, driver opts en device ponemos la ruta donde queremos guardar los datos)
 
 Makefile
 {
@@ -186,4 +205,11 @@ Cambiamos el nombre del archivo a el que usa wordpress como default con este com
 	sed -i "s/username_here/$MARIADB_USER/" /var/www/html/wordpress/wp-config.php
 	sed -i "s/password_here/$MARIADB_PASS/" /var/www/html/wordpress/wp-config.php
 	sed -i "s/localhost/mariadb:3306/" /var/www/html/wordpress/wp-config.php (Cambiamos el host a mariadb y le ponemos el puerto)
+}
+
+Crear volumenes tanto para wordpress como mariadb
+{
+Crear volumen con "docker volume create NOMBRE_VOLUMEN"
+Los volumenes se guarda en /var/lib/docker/volumes.
+
 }
