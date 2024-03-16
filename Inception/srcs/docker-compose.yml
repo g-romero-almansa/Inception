@@ -1,0 +1,60 @@
+version: '2.18'
+
+services:
+  mariadb:
+    build: /home/gromero-/Inception/srcs/requirements/mariadb
+    env_file: .env
+    container_name: mariadb
+    restart: unless-stopped
+    expose:
+      - 3306
+    networks:
+      - inception
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  nginx:
+    build: /home/gromero-/Inception/srcs/requirements/nginx
+    env_file: .env
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      -  443:443
+    depends_on:
+      - wordpress
+    networks:
+      - inception
+    volumes:
+      - wordpress_data:/var/www/html/wordpress
+
+  wordpress:
+    build: /home/gromero-/Inception/srcs/requirements/wordpress
+    env_file: .env
+    container_name: wordpress
+    restart: unless-stopped
+    expose:
+      - 9000
+    depends_on:
+      - mariadb
+    networks:
+      - inception
+    volumes:
+      - wordpress_data:/var/www/html/wordpress
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/gromero-/data/mariadb
+      o: bind
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/gromero-/data/wordpress
+      o: bind
+
+networks:
+  inception:
+    driver: bridge
