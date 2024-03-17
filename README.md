@@ -1,4 +1,4 @@
-Guideo for Inception
+Guide for Inception
 
 Connect with ssh through port 4343 as the subject request.
 
@@ -28,3 +28,79 @@ Docker-Compose.yml, with this file we can run all containers at the same time an
     Depends_on(Set the start and shutdown dependencies and order, example here wordpress depend on mariadb and nginx on wordpress so the order its mariadb-wordpress-nginx)
     Networks(Define the name of the network and driver on bridge mode means that the services on that network can communicate and are isolates from the other outside the network)
     Volumes(Define the name of the volume, with driver local you mean the volume info will be store locally, driver opts type and o are set to default and the important its device option wich indicates the path to store info)
+
+ENV file has every credential, password etc... This will be used on services to not post any private info
+
+Dockerfile information
+
+    FROM(Initializes a new build stage from an image, in all the dockerfile is debian::bullseye as required on the subject)
+    RUN(This will executes commands on the image, almost every case is for installing the services, example apt-get install nginx)
+    COPY(Copy files from the machine to the container, most of them are for copying scripts)
+    EXPOSE(Specified port to listen and the run time, probably not necessary if you use expose on the docker-compose)
+    CMD(Instruction to set a command execute when the container its running, all we use its for executing scripts on the container, example CMD ["sh", "nginx.sh"])
+    
+Nginx container
+
+Dockerfile has the run to install nginx and openssl, copy for configuration file and the script, the expose of the port and cmd for running the script.
+
+The script does the following
+
+    #!/bin/bash
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $PATH_KEY -out $PATH_CERTIFICATE -subj     "/C=$COUNTRY/ST=$ST/L=$L/O=$OU/OU=$OU/CN=$DOMAIN/UID=$LOGIN"(Creates the certificate and the key of openssl to do secure connection on the web site)
+    sed -i "s/domain/$DOMAIN/" /etc/nginx/nginx.conf(These three lines change credentials on the conf file so they are not uploaded on github)
+    sed -i "s#path_certificate#$PATH_CERTIFICATE#g" /etc/nginx/nginx.conf
+    sed -i "s#path_key#$PATH_KEY#g" /etc/nginx/nginx.conf
+    nginx -g "daemon off;"(Set daemon off so the container run on the background and doesn't exit)
+    
+The configuration has the following
+
+    events	{}
+    http	{
+	    server {
+		    listen		443 ssl;
+		    server_name	domain;
+		    ssl_protocols	TLSv1.2 TLSv1.3;
+		    ssl_certificate path_certificate;
+            ssl_certificate_key path_key;
+		    root            /var/www/html/wordpress;
+            index           index.php;
+		    include       /etc/nginx/mime.types;
+		    location ~ \.php$ {
+		    	try_files $uri =404;
+		    	fastcgi_pass wordpress:9000;
+		    	include fastcgi_params;
+		    	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		    }
+	    }
+    }
+
+Mariadb container
+
+Dockerfile has the run to install mariadb server and create the /run/mysqld for storing the socket, copy for configuration file and the script, the expose of the port and cmd for running the script.
+
+The script does the following
+
+    #!/bin/bash
+    echo "CREATE DATABASE ${DATABASE_NAME};" > init.sql(All this commands create a .sql file wich is used at the start of mariadb, its create the database, change root password, create another user and gives it privilages, and flush privilages to make changes without restarting mariadb)
+    echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASS}';" >> init.sql
+    echo "CREATE USER '${MARIADB_USER}'@'%' IDENTIFIED BY '${MARIADB_PASS}';" >> init.sql
+    echo "GRANT ALL PRIVILEGES ON *.* TO '${MARIADB_USER}'@'%';" >> init.sql
+    echo "FLUSH PRIVILEGES;" >> init.sql
+    chmod 777 init.sql(Gives permision to execute the file)
+    mv init.sql /run/mysqld/init.sql(Moves the init.sql file to the given path)
+    chown -R mysql:root /var/run/mysqld(Change the owner of directory and files with -R to the mysql root of the directory and all files of /var/run/mysqld)
+    mariadbd --init-file /run/mysqld/init.sql(Initialized the database with daemon off mariadbd and launch init.sql script and the start thanks to --init-file)
+
+The configuration has the following
+
+    [mysqld]
+    user		= mysql
+    pid-file	= /run/mysqld/mysqld.pid
+    socket		= /run/mysqld/mysqld.sock
+    port		= 3306
+    basedir		= /usr
+    datadir		= /var/lib/mysql
+    tmpdir		= /tmp
+    bind-address = 0.0.0.0
+    Its a shorter configuration file, but has the same as the default conf file except for bind-address wich was localhost IP and change it to 0.0.0.0 so its listen connections for all not only localhost
+    
