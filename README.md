@@ -4,6 +4,10 @@ Connect with ssh through port 4343 as the subject request.
 
     ssh gromero-@localhost -p 4343
 
+To change and create hostname
+
+	nano /etc/hosts and here add 127.0.0.1 gromero-.42.fr
+ 
 Makefile with just a few rules to set up all containers, delete all containers images and networks and to put down and then up all containers.
 
     docker-compose -f srcs/docker-compose.yml build
@@ -127,20 +131,3 @@ The script does the following
 	wp core install --allow-root --url=$DOMAIN --title=IWantToPass  --admin_user=$WORDPRESS_ADMIN --	admin_password=$WORDPRESS_ADMIN_PASS --admin_email=$WORDPRESS_ADMIN_MAIL --skip-email --path=/var/www/html/wordpress(This just do the configuration by command line with wp and to not leek again credentials)
 	wp user create --allow-root $WORDPRESS_USER $WORDPRESS_USER_MAIL --user_pass=$WORDPRESS_USER_PASS --path=/var/www/html/wordpress --url=$DOMAIN(This creates another user for wordpress with command line and not leek credentials)
 	/usr/sbin/php-fpm7.4 -F (Start php with daemon off)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
