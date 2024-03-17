@@ -104,3 +104,43 @@ The configuration has the following
     bind-address = 0.0.0.0
     Its a shorter configuration file, but has the same as the default conf file except for bind-address wich was localhost IP and change it to 0.0.0.0 so its listen connections for all not only localhost
     
+Wordpress container
+
+Dockerfile has the run to  create the default root folder of web servers /var/www/html, install php php-mysql php-fpm mariadb-client wget tar wordpress and download wordpress with wget and decompress it with tar in /var/www/html, copy for the script, the expose of the port and cmd for running the script.
+
+The script does the following
+
+	#!/bin/bash
+ 	mkdir -p /run/php(The same as mariadb, create this directory for the pid of php)
+	chown -R www-data.www-data /var/www/html/wordpress(Change the user and group permission to www-data.www-data on the directory)
+	chmod -R 755 /var/www/html/wordpress(Gives permission to the directory)
+	sed -i 's#listen = /run/php/php7.4-fpm.sock#listen = wordpress:9000#g' /etc/php/7.4/fpm/pool.d/www.conf(Change the port wordpress listen)
+	mv /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php(Change the name of file to default wordpress conf file)
+	sed -i "s/database_name_here/$DATABASE_NAME/" /var/www/html/wordpress/wp-config.php(All of this is to change credentials to env variables and not leek them on github)
+	sed -i "s/username_here/$MARIADB_USER/" /var/www/html/wordpress/wp-config.php
+	sed -i "s/password_here/$MARIADB_PASS/" /var/www/html/wordpress/wp-config.php
+	sed -i "s/localhost/mariadb:3306/" /var/www/html/wordpress/wp-config.php
+	sed -i "s/put your unique phrase here/$PHRASE/" /var/www/html/wordpress/wp-config.php
+	wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar(Install wp command line)
+	chmod +x wp-cli.phar
+	mv wp-cli.phar /usr/local/bin/wp(This tow lines are for being able to write wp, so we give permison to wp-cli.phar and move it to the path and being able to execute it)
+	wp core install --allow-root --url=$DOMAIN --title=IWantToPass  --admin_user=$WORDPRESS_ADMIN --	admin_password=$WORDPRESS_ADMIN_PASS --admin_email=$WORDPRESS_ADMIN_MAIL --skip-email --path=/var/www/html/wordpress(This just do the configuration by command line with wp and to not leek again credentials)
+	wp user create --allow-root $WORDPRESS_USER $WORDPRESS_USER_MAIL --user_pass=$WORDPRESS_USER_PASS --path=/var/www/html/wordpress --url=$DOMAIN(This creates another user for wordpress with command line and not leek credentials)
+	/usr/sbin/php-fpm7.4 -F (Start php with daemon off)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
