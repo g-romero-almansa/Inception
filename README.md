@@ -1,6 +1,6 @@
 Guide for Inception
 
-Connect with ssh through port 4343 as the subject request.
+Connect with ssh through port 4343
 
     ssh gromero-@localhost -p 4343
 
